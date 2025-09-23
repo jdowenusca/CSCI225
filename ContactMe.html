@@ -12,11 +12,97 @@
     <p>If you would like to get in touch with me, please feel free to reach out via email or through my social media channels.</p>
     <h2>Email</h2>
     <p>You can email me at: <a href="mailto:jdowen@usca.edu">jdowen@usca.edu</a></p>
-    <h2>Social Media</h2>
-    <ul>
-        <li><a href="https://www.linkedin.com/in/judah-owen">LinkedIn</a></li>
-        <li><a href="https://github.com/judah-owen">GitHub</a></li>
-    </ul>
+    <!--Embedding Video-->
+    <h2>Embedded Video</h2>
+    <center>
+        <iframe width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/lhckuhUxcgA" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </center>
+    <!--Feedback Form-->
+    <h2>Feedback Form</h2>
+    <form id="feedback" name="feedback" action="#" method="post">
+
+    <!-- First Name -->
+    <label for="fname">First Name:</label>
+    <input type="text" id="fname" name="fname" placeholder="anonymous" required>
+    <br><br>
+
+    <!-- Last Name -->
+    <label for="lname">Last Name:</label>
+    <input type="text" id="lname" name="lname" placeholder="anonymous" required>
+    <br><br>
+
+    <!-- Email -->
+    <label for="mail">Email:</label>
+    <input type="email" id="mail" name="mail" placeholder="name@domain.com">
+    <br><br>
+
+    <!-- Recommend Radio Buttons -->
+    <p>Would you recommend this website?</p>
+    <input type="radio" id="yes" name="recommend" value="yes">
+    <label for="yes">Yes</label>
+    <input type="radio" id="no" name="recommend" value="no">
+    <label for="no">No</label>
+    <br><br>
+
+    <!-- Favorite Website Select -->
+    <label for="favsite">Favorite Website:</label>
+    <select id="favsite" name="favsite">
+      <option value="google">Google</option>
+      <option value="facebook">Facebook</option>
+      <option value="twitter">Twitter</option>
+      <option value="time">Time</option>
+      <option value="other">Other</option>
+    </select>
+    <br><br>
+
+    <!-- Rating -->
+    <label for="rating">Rate this website (1-10):</label>
+    <input type="range" id="rating" name="rating" min="1" max="10" step="1" value="5" aria-valuemin="1" aria-valuemax="10" aria-valuenow="5">
+    <output id="ratingValue">5</output>
+    <script>
+    // keep small inline script near the control to update visible value and ARIA
+    (function () {
+        const slider = document.getElementById('rating');
+        const output = document.getElementById('ratingValue');
+        const update = (v) => {
+            output.value = v;
+            slider.setAttribute('aria-valuenow', v);
+        };
+        update(slider.value);
+        slider.addEventListener('input', (e) => update(e.target.value));
+    })();
+    </script>
+    <br><br>
+
+    <!-- Extra HTML5 features -->
+    <label for="phone">Phone Number:</label>
+    <input type="tel" id="phone" name="phone" placeholder="123-456-7890" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+    <br><br>
+
+    <label for="website">Your Website:</label>
+    <input type="url" id="website" name="website" placeholder="https://example.com">
+    <br><br>
+
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob">
+    <br><br>
+
+    <!-- Comments -->
+    <label for="comment">Additional Comments:</label><br>
+    <textarea id="comment" name="comment" rows="5" cols="40"></textarea>
+    <br><br>
+
+    <!-- Submit -->
+    <input type="submit" value="Submit Feedback">
+
+  </form>
 </body>
 
 </html>
