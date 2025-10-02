@@ -1,0 +1,149 @@
+:root {
+    --background-color: rgb(255, 93, 35);
+    --intro-color: rgb(255, 162, 24);
+    --page-color: rgb(255, 255, 255);
+    --bottom-bar-height: 15vh;
+}
+ol, ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+ol {
+  list-style-type: decimal; 
+}
+
+ul {
+  list-style-type: disc;
+  margin-top: 10px;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+body {
+    background: linear-gradient(90deg, var(--background-color), var(--intro-color));
+    background-color: var(--background-color);
+    color: var(--page-color);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+body h1{
+    text-align: center;
+}
+
+.navbar{
+    padding: 10px;
+    text-align: center;
+}
+
+.introduction h1{
+    position: absolute;
+    top: 20%;
+    right: 0;
+    height: 5%;
+    background-color: var(--intro-color);
+    border-radius: 8px;
+    margin: 20px;
+    padding: 20px;
+    text-align: center;
+}
+
+.introduction p{
+    position: absolute;
+    bottom: 70vh;
+    right: 33vh;
+    opacity: 0;
+    text-align: right;
+}
+.introduction h1:hover{
+    background-color: var(--background-color);
+    color: var(--page-color);
+    transition: background-color 0.5s, color 0.5s;
+}
+.introduction img{
+    position: absolute;
+    right: 3vh;
+    top: 35vh;
+    opacity: 0;
+    float: right;
+    margin: 0 0 10px 10px;
+    border-radius: 8px;
+}
+.introduction:hover p{
+    position: absolute;
+    right: 33vh;
+    top: 35%;
+    width: 30%;
+    padding: 20px;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+.introduction:hover img{
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+.assignments h2{
+    position: absolute;
+    top: 20%;
+    left: 0;
+    height: 5%;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    margin: 20px;
+    padding: 20px;
+    font-size: 2em;
+    text-align: center;
+}
+.assignments p, .assignments ol{
+    position: absolute;
+    bottom: 70vh;
+    left: 10vh;
+    width: 30%;
+    opacity: 0;
+    text-align: left;
+}
+.assignments h2:hover{
+    background-color: var(--intro-color);
+    color: var(--page-color);
+    transition: background-color 0.5s, color 0.5s;
+}
+.assignments:hover p{
+    position: absolute;
+    left: -2vh;
+    top: 28%;
+    width: 20%;
+    height: 40%;
+    padding: 40px;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+.assignments:hover ol{
+    position: absolute;
+    left: 5vh;
+    top: 35%;
+    width: 30%;
+    height: 40%;
+    padding: 20px;
+    margin: 30px;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.portfolio{
+    padding: 20px;
+}
+.contact{
+    padding: 20px;
+}
+.schedule{
+    padding: 20px;
+}
+footer{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: right;
+}
