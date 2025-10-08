@@ -162,6 +162,13 @@ body a:hover{
     z-index: 1;
 }
 
+.portfolio p, .portfolio ol{
+    position: absolute;
+    top: 45%;
+    right: 20%;
+    width: 20%;
+    display: none;
+}
 .portfolio h2{
     position: absolute;
     background-color: var(--background-color);
@@ -173,25 +180,36 @@ body a:hover{
     border-radius: 8px;
     font-size: 2em;
     text-align: center;
+    display: block;
 }
 
+/*
 .portfolio p, .portfolio ol{
     position: absolute;
     bottom: 30vh;
     right: 0;
     width: 30%;
     height: 30%;
-    opacity: 0;
+    opacity: 1;
 }
-
+*/
 .portfolio h2:hover{
-    z-index: 1;
+
     background-color: var(--intro-color);
     color: var(--page-color);
-    height: 50%;
+    height: 5%;
     width: 35%;
     transition: background-color 0.5s, color 0.5s;
 }
+
+.portfolio:hover p{
+    display: block;
+}
+
+.portfolio:hover ol{
+    display: block;
+}
+/*
 .portfolio:hover p{
     position: absolute;
     box-shadow: 0 4px 24px 0 rgba(0,0,0,0.25);
@@ -204,13 +222,13 @@ body a:hover{
     transition: opacity 0.5s;
     z-index: 1;
 }
-
+*/
 .portfolio:hover ol{
     position: absolute;
     list-style-position: inside;
     right: 25%;
     top: 55%;
-    width: 30%;
+    width: 300px;
     opacity: 1;
     transition: opacity 0.5s;
     margin: 10px;
