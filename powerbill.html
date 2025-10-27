@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Georgia Power Bill Calculator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --card:#f7f7f7; --ink:#222; --muted:#667; --accent:#4b8df8; --line:#ddd;
+    }
+    body{
+      font-family: system-ui, Arial, sans-serif;
+      margin:0; padding:24px; background:#fafafa; color:var(--ink);
+    }
+    h1{ font-size:1.6rem; margin:0 0 12px; }
+    p{ color:var(--muted); line-height:1.35; margin:0 0 12px; }
+    .grid{
+      display:grid; gap:20px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      align-items:start;
+    }
+    .card{
+      background:var(--card); border:1px solid var(--line);
+      border-radius:14px; padding:18px 18px 14px;
+      box-shadow:0 1px 2px rgba(0,0,0,.03);
+    }
+    label{ display:block; font-weight:600; margin:14px 0 6px; }
+    input[type="number"]{
+      width:100%; padding:10px 12px; border:1px solid var(--line);
+      border-radius:8px; font-size:16px; background:#fff;
+    }
+    .row{ display:flex; align-items:center; gap:8px; }
+    .row input[type="checkbox"]{ transform:scale(1.2); }
+    .btns{ display:flex; gap:10px; margin-top:14px; }
+    button{
+      border:0; border-radius:10px; padding:10px 14px; font-weight:700;
+      cursor:pointer;
+    }
+    .primary{ background:var(--accent); color:#fff; }
+    .ghost{ background:#fff; border:1px solid var(--line); }
+    table{ width:100%; border-collapse:collapse; margin-top:6px; font-size:14px; }
+    th, td{ border:1px solid var(--line); padding:8px 10px; }
+    th{ text-align:left; color:#444; background:#f2f2f2; }
+    tfoot td{ font-weight:800; }
+    .mono{ font-variant-numeric: tabular-nums; }
+    .muted{ color:var(--muted); }
+    .subtitle{ font-weight:700; margin-top:10px; }
+  </style>
+</head>
+<body>
+  <div class="grid">
+    <!-- LEFT: Inputs -->
+    <section class="card">
+      <h1>Georgia Power Bill Calculator</h1>
+      <p class="muted">
+        Enter your usage and billing info to estimate your monthly bill. Rates reflect the
+        assignment spec (Residential R-27).
+      </p>
+
+      <div class="muted subtitle">Effective August 2023</div>
+
+      <label for="kwh">Enter your Monthly Usage in kilowatt hours (kWh):</label>
+      <input id="kwh" type="number" inputmode="decimal" placeholder="e.g., 1000" min="0" step="any" />
+
+      <label for="days">Enter the number of days for your current billing period:</label>
+      <input id="days" type="number" inputmode="decimal" placeholder="e.g., 31" min="1" step="any" />
+
+      <div class="row">
+        <input id="insideCity" type="checkbox" />
+        <label for="insideCity" style="margin:0;">Is your residence INSIDE the city limits?</label>
+      </div>
+
+      <div class="row">
+        <input id="isSummer" type="checkbox" />
+        <label for="isSummer" style="margin:0;">Is this a Summer month (June–September)?</label>
+      </div>
+
+      <label for="tax">Enter Sales Tax (%):</label>
+      <input id="tax" type="number" inputmode="decimal" placeholder="e.g., 7" min="0" step="any" />
+
+      <div class="btns">
+        <button class="primary" id="btnCalc">Submit</button>
+        <button class="ghost" id="btnReset" type="button">Reset</button>
+      </div>
+    </section>
+
+    <!-- RIGHT: Outputs -->
+    <section class="card">
+      <h1>Details of your bill</h1>
+      <table>
+        <thead>
+          <tr><th>Items</th><th class="mono">Fees ($)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Base Charge:</td><td id="baseCharge" class="mono">0.00</td></tr>
+          <tr><td>Tier 1 Component (kWh):</td><td id="tier1" class="mono">0.00</td></tr>
+          <tr><td>Tier 2 Component (kWh):</td><td id="tier2" class="mono">0.00</td></tr>
+          <tr><td>Tier 3 Component (kWh):</td><td id="tier3" class="mono">0.00</td></tr>
+          <tr><th>Base Revenue — Base Bill Subtotal:</th><th id="baseSubtotal" class="mono">0.00</th></tr>
+          <tr><td>Fuel Cost Rider:</td><td id="fuel" class="mono">0.00</td></tr>
+          <tr><td>Demand Side Management Residential Rider:</td><td id="dsm" class="mono">0.00</td></tr>
+          <tr><td>Nuclear Construction Cost Recovery Rider:</td><td id="nuclear" class="mono">0.00</td></tr>
+          <tr><td>Environmental Compliance Cost Recovery Rider:</td><td id="env" class="mono">0.00</td></tr>
+          <tr><th>Total Revenue — Current Service Subtotal:</th><th id="totalRevenue" class="mono">0.00</th></tr>
+          <tr><td>Franchise Fee:</td><td id="franchise" class="mono">0.00</td></tr>
+          <tr><th>Total (excluding tax):</th><th id="beforeTax" class="mono">0.00</th></tr>
+          <tr><th>TOTAL (w/ tax):</th><th id="grandTotal" class="mono">0.00</th></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="margin-top:10px;">
+        Notes: Base Charge = <strong>46.03¢/day</strong>.
+        Summer fuel rider = <strong>$0.045876/kWh</strong> (Jun–Sep); otherwise <strong>$0.042859/kWh</strong>.
+        Riders DSM 1.5989%, Nuclear 4.1562%, Environmental 16.2813% (all on Base Revenue).
+        Franchise: Inside city 3.0674% of Total Revenue; Outside city 1.1839%.
+      </p>
+    </section>
+  </div>
+
+  <script>
+    // ---- constants (from the assignment) ----
+    const BASE_CENTS_PER_DAY = 46.03;                 // cents/day
+    const BASE_PER_DAY = BASE_CENTS_PER_DAY / 100;    // $/day
+
+    // Season tier rates ($/kWh)
+    const SUMMER = { t1: 0.066678, t2: 0.110748, t3: 0.114625 };
+    const WINTER = { t1: 0.062404, t2: 0.062404, t3: 0.062404 };
+
+    // Fuel rider ($/kWh)
+    const FUEL_SUMMER = 0.045876; // Jun–Sep
+    const FUEL_WINTER = 0.042859; // Oct–May
+
+    // Percent riders (apply to Base Revenue)
+    const PCT_DSM      = 1.5989 / 100;
+    const PCT_NUCLEAR  = 4.1562 / 100;
+    const PCT_ENV      = 16.2813 / 100;
+
+    // Franchise (apply to Total Revenue)
+    const PCT_IN_CITY  = 3.0674 / 100;
+    const PCT_OUT_CITY = 1.1839 / 100;
+
+    // ---- helpers ----
+    const $ = (id) => document.getElementById(id);
+    const fmt = (n) => (isFinite(n) ? n.toFixed(2) : "0.00");
+
+    function calc() {
+      // Read & convert inputs
+      const kwh  = parseFloat($("kwh").value);
+      const days = parseFloat($("days").value);
+      const insideCity = $("insideCity").checked;
+      const isSummer = $("isSummer").checked;
+      const taxPct = parseFloat($("tax").value);
+
+      if (!(kwh >= 0) || !(days > 0) || !(taxPct >= 0)) {
+        alert("Please enter valid numbers for kWh, days, and tax.");
+        return;
+      }
+
+      // Base charge
+      const baseCharge = days * BASE_PER_DAY;
+
+      // Tier splits
+      const k1 = Math.min(kwh, 650);
+      const k2 = Math.min(Math.max(kwh - 650, 0), 350);
+      const k3 = Math.max(kwh - 1000, 0);
+
+      // Select rates by season
+      const R = isSummer ? SUMMER : WINTER;
+      const tier1 = k1 * R.t1;
+      const tier2 = k2 * R.t2;
+      const tier3 = k3 * R.t3;
+
+      // Base Revenue (subtotal)
+      const baseRevenue = baseCharge + tier1 + tier2 + tier3;
+
+      // Fuel rider per kWh by season
+      const fuelRate = isSummer ? FUEL_SUMMER : FUEL_WINTER;
+      const fuel = kwh * fuelRate;
+
+      // Percentage riders (on Base Revenue)
+      const dsm     = baseRevenue * PCT_DSM;
+      const nuclear = baseRevenue * PCT_NUCLEAR;
+      const env     = baseRevenue * PCT_ENV;
+
+      // Total Revenue
+      const totalRevenue = baseRevenue + fuel + dsm + nuclear + env;
+
+      // Franchise (on Total Revenue)
+      const franchise = totalRevenue * (insideCity ? PCT_IN_CITY : PCT_OUT_CITY);
+
+      // Totals
+      const beforeTax = totalRevenue + franchise;
+      const tax = beforeTax * (isNaN(taxPct) ? 0 : (taxPct / 100));
+      const grandTotal = beforeTax + tax;
+
+      // Write outputs (two decimals)
+      $("baseCharge").textContent = fmt(baseCharge);
+      $("tier1").textContent      = fmt(tier1);
+      $("tier2").textContent      = fmt(tier2);
+      $("tier3").textContent      = fmt(tier3);
+      $("baseSubtotal").textContent = fmt(baseRevenue);
+      $("fuel").textContent       = fmt(fuel);
+      $("dsm").textContent        = fmt(dsm);
+      $("nuclear").textContent    = fmt(nuclear);
+      $("env").textContent        = fmt(env);
+      $("totalRevenue").textContent = fmt(totalRevenue);
+      $("franchise").textContent  = fmt(franchise);
+      $("beforeTax").textContent  = fmt(beforeTax);
+      $("grandTotal").textContent = fmt(grandTotal);
+
+      // If total bill > $500, open the page in a new tab
+      if (grandTotal > 500) {
+        window.open(
+          "https://www.georgiapower.com/residential/save-money-and-energy/products-programs.html",
+          "_blank"
+        );
+      }
+    }
+
+    function resetForm() {
+      $("kwh").value = "";
+      $("days").value = "";
+      $("insideCity").checked = false;
+      $("isSummer").checked = false;
+      $("tax").value = "";
+      for (const id of ["baseCharge","tier1","tier2","tier3","baseSubtotal","fuel","dsm","nuclear","env","totalRevenue","franchise","beforeTax","grandTotal"]) {
+        $(id).textContent = "0.00";
+      }
+    }
+
+    $("btnCalc").addEventListener("click", calc);
+    $("btnReset").addEventListener("click", resetForm);
+  </script>
+</body>
+</html>
